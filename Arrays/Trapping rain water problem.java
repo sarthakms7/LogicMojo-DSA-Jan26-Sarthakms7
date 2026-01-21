@@ -20,48 +20,29 @@ class Result {
      */
 
     public static int rain_water(List<Integer> hei) {
+        if(hei.size() == 0) return 0;
         int n = hei.size();
-        if(n <= 2) return 0;
-        int prevPeak = 0;
-        int totalWater = 0;
-        //       boolean[] visited = new boolean[n];
+
+        int[] leftMax = new int[n];
+        int[] rightMax = new int[n];
+
+        leftMax[0] = hei.get(0);
+        rightMax[n-1] = hei.get(n-1);
 
         for(int i = 1; i < n; i++) {
-            if(hei.get(i) >= hei.get(prevPeak)) {
-                if(hei.get(prevPeak) == 0) {
-                    prevPeak = i;
-                    continue;
-                }
-                int height = Math.min(hei.get(i), hei.get(prevPeak));
-                totalWater += (height * (i - prevPeak - 1));
-                for(int j = prevPeak + 1; j < i; j++) {
-                    //                  if(visited[j]) continue;
-                    totalWater -= hei.get(j);
-                    //                  visited[j] = true;
-                }
-                prevPeak = i;
-            }
+            leftMax[i] = Math.max(leftMax[i-1], hei.get(i));
         }
 
-        prevPeak = n-1;
-        for(int i = prevPeak - 1; i >= 0; i--) {
-            if(hei.get(i) >= hei.get(prevPeak)) {
-                if(hei.get(prevPeak) == 0) {
-                    prevPeak = i;
-                    continue;
-                }
-                int height = Math.min(hei.get(i), hei.get(prevPeak));
-                totalWater += (height * (prevPeak - i - 1));
-                for(int j = prevPeak - 1; j > i; j--) {
-                    //                if(visited[j]) continue;
-                    totalWater -= hei.get(j);
-                    //                visited[j] = true;
-                }
-                prevPeak = i;
-            }
+        for(int i = n - 2; i >= 0; i--) {
+            rightMax[i] = Math.max(rightMax[i+1], hei.get(i));
         }
 
-        return totalWater;
+        int ans = 0;
+        for(int i = 0; i < n; i++) {
+            ans += Math.min(leftMax[i], rightMax[i]) - hei.get(i);
+        }
+
+        return ans;
     }
 
 }
